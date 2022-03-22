@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         腾讯课堂签到提醒
 // @namespace    http://tampermonkey.net/
-// @version      2.0
+// @version      2.1
 // @description  腾讯课堂签到时弹出通知，可配置自动签到
 // @author       askar882
 // @match        https://ke.qq.com/webcourse/*
@@ -50,7 +50,11 @@
     // 签到按钮
     const signButton = () => document.querySelector('#react-body > div.sign-dialog > div.im-dialog-wrap > div > div.btn-group > span');
     // 自动签到
-    const autoSign = () => signButton().click();
+    const autoSign = () => {
+        if (signButton()) {
+            signButton().click();
+        }
+    };
     // 最近一次签到时间，用于对通知进行节流
     let lastSignTime = getTime();
     // MutationObserver侦听器
@@ -60,7 +64,7 @@
             // log('签到');
             if (AUTO_SIGN_ENABLED) {
                 autoSign();
-                notify('腾讯课堂', '已完成自动签到');
+                notify('腾讯课堂', '已完成自动签到', { callback: autoSign });
             } else {
                 notify('腾讯课堂', '签到');
             }
